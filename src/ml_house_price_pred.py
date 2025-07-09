@@ -27,6 +27,7 @@ from sklearn.preprocessing import MinMaxScaler,FunctionTransformer
 from sklearn.compose import ColumnTransformer
 
 od.download("https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data")
+#hemantk777  721b095dacb7cfa6129768282921b8fb
 
 raw_data=pd.read_csv("/content/house-prices-advanced-regression-techniques/train.csv")
 test_data=pd.read_csv("/content/house-prices-advanced-regression-techniques/test.csv")
@@ -260,8 +261,19 @@ import shap
 explainer = shap.Explainer(xgb)          # Use trained model
 shap_values = explainer(x_test)
 
-shap.plots.beeswarm(shap_values)           # Global importance
-shap.plots.waterfall(shap_values[0])       # Single prediction breakdown
+shap.plots.backend = "matplotlib"   # Use matplotlib backend for plots
+
+shap.plots.beeswarm(shap_values, show=False) # Global importance
+plt.title("SHAP Global Feature Importance")
+plt.tight_layout()
+plt.savefig("shap_beeswarm_plot.png", dpi=300, bbox_inches='tight')
+plt.show()
+
+shap.plots.waterfall(shap_values[0], show=False)  # Single prediction breakdown
+plt.title("SHAP Waterfall for 1 Prediction")
+plt.tight_layout()
+plt.savefig("shap_waterfall_plot.png", dpi=300, bbox_inches='tight')
+plt.show()
 
 !pip install lime
 
@@ -326,6 +338,10 @@ lgb_model.fit(x_train, y_train)
 
 print("LightBGM:", evaluate(lgb_model, x_test, y_test))    # best score than xgb
 
+#Save the Model
+import joblib
+joblib.dump(lgb_model, "lgb_model.pkl")
+
 """## Ensemble Stacking
 Combine 2 models (LightBGM, XGB)
 """
@@ -344,3 +360,15 @@ stack = StackingRegressor(
 stack.fit(x_train, y_train)
 
 print("Stack:", evaluate(stack, x_test, y_test))     # slightly better than LightBGM
+
+"""## 📈 Future Improvements
+
+- Feature engineering: polynomial features, feature selection
+- Hyperparameter tuning with Optuna or GridSearchCV
+- Streamlit-based web app deployment
+
+## Author
+Hemant K  
+📧 hemant777.karpe@gmail.com
+🔗 [LinkedIn](https://www.linkedin.com/in/hemant-karpe)
+"""
